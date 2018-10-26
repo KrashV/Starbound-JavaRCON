@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="JavaRcon:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/JavaRcon_jar</output-path>
+    <root id="archive" name="JavaRcon.jar">
+      <element id="module-output" name="JavaRcon" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/rkon-core-1.1.2.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
