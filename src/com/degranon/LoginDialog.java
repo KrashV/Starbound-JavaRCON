@@ -1,10 +1,13 @@
 package com.degranon;
 
 import java.awt.*;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
+import java.util.prefs.Preferences;
 import javax.swing.*;
 import javax.swing.border.*;
 
-public class LoginDialog extends JDialog {
+public class LoginDialog extends JDialog implements PreferenceChangeListener {
 
     private JTextField tfHost;
     private JTextField tfPort;
@@ -16,7 +19,9 @@ public class LoginDialog extends JDialog {
     private JButton btnCancel;
     private boolean succeeded;
 
-    public LoginDialog(Frame parent) {
+    private Preferences loginPreferences;
+
+    LoginDialog(Frame parent) {
         super(parent, "Login", true);
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints cs = new GridBagConstraints();
@@ -64,6 +69,10 @@ public class LoginDialog extends JDialog {
         btnLogin = new JButton("Login");
 
         btnLogin.addActionListener(e -> {
+            loginPreferences.putByteArray("ip", getHost().getBytes());
+            loginPreferences.putByteArray("password", getPassword().getBytes());
+            loginPreferences.putInt("port", getPort());
+
             try {
                 RconClient.authenticate(getHost(), getPort(), getPassword());
                 succeeded = true;
@@ -85,6 +94,15 @@ public class LoginDialog extends JDialog {
         pack();
         setResizable(false);
         setLocationRelativeTo(parent);
+
+        loginPreferences = Preferences.userRoot().node("javaRconPrefs");
+        fillInFields();
+    }
+
+    private void fillInFields() {
+        tfHost.setText(new String(loginPreferences.getByteArray("ip", "".getBytes())));
+        pfPassword.setText(new String(loginPreferences.getByteArray("password", "".getBytes())));
+        tfPort.setText(String.valueOf(loginPreferences.getInt("port", 21026)));
     }
 
     public String getHost() {
@@ -101,5 +119,10 @@ public class LoginDialog extends JDialog {
 
     public boolean isSucceeded() {
         return succeeded;
+    }
+
+    public void preferenceChange(PreferenceChangeEvent e)
+    {
+        fillInFields();
     }
 }

@@ -14,8 +14,8 @@ public class RconManager extends JFrame {
 
     private static JTextArea display;
 
-    public RconManager() {
-        final JButton btnLogin = new JButton("Click to login");
+    RconManager() {
+        final JButton btnLogin = new JButton("Login");
         final JLabel lbCommand = new JLabel("Enter command:");
         final JTextField tfCommand = new JTextField(30);
         tfCommand.setEnabled (false);
@@ -42,8 +42,9 @@ public class RconManager extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String command = tfCommand.getText();
-                LogMessage(RconClient.send(command));
+                LogMessage(command);
                 tfCommand.setText("");
+                new Thread(() -> LogMessage(RconClient.send(command))).start();
             }
         });
         JPanel pane = new JPanel();
@@ -78,18 +79,14 @@ public class RconManager extends JFrame {
     }
 
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    UIManager.setLookAndFeel(
-                            "javax.swing.plaf.metal.MetalLookAndFeel");
-                    //  "com.sun.java.swing.plaf.motif.MotifLookAndFeel");
-                    //UIManager.getCrossPlatformLookAndFeelClassName());
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-                new RconManager().setVisible(true);
+        java.awt.EventQueue.invokeLater(() -> {
+            try {
+                UIManager.setLookAndFeel(
+                        "javax.swing.plaf.metal.MetalLookAndFeel");
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
+            new RconManager().setVisible(true);
         });
     }
 
